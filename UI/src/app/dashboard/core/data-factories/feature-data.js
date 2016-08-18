@@ -24,7 +24,8 @@
 		var buildDone = '/api/feature/estimates/done/';
 
 		var testFeatureWip = 'test-data/feature-super.json';
-		var buildFeatureWip = '/api/feature/estimates/super/';
+		var buildFeatureWip = '/api/feature/';
+		var buildSuperFeatureWip = '/api/feature/estimates/super/';
 
 		var testSprint = 'test-data/feature-iteration.json';
 		var buildSprint = '/api/iteration/';
@@ -40,6 +41,7 @@
 			wip : wip,
 			done : done,
 			featureWip : featureWip,
+			superFeatureWip : superFeatureWip,
 			sprint : sprint,
 			totalKanban : totalKanban,
 			wipKanban : wipKanban,
@@ -98,9 +100,22 @@
 		 * @param componentId
 		 * @param filterTeamId
 		 */
-		function featureWip(componentId,filterTeamId,estimateMetricType) {
+		function superFeatureWip(componentId,filterTeamId,estimateMetricType) {
+  			return $http.get(HygieiaConfig.local ? testFeatureWip : buildSuperFeatureWip + filterTeamId + param + componentId + agileType.scrum
+						+ (estimateMetricType != null? estimateMetricTypeParam + estimateMetricType : ""))
+		  					.then(function(response) {
+  						return response.data;
+  					});
+		} 
+		/**
+		 * Retrieves current features in progress for a given sprint and team
+		 *
+		 * @param componentId
+		 * @param filterTeamId
+		 */
+		function featureWip(componentId,filterTeamId) {
 			return $http.get(HygieiaConfig.local ? testFeatureWip : buildFeatureWip + filterTeamId + param + componentId + agileType.scrum
-					+ (estimateMetricType != null? estimateMetricTypeParam + estimateMetricType : ""))
+					)
 					.then(function(response) {
 						return response.data;
 					});

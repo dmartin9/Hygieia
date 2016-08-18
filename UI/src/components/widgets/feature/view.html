@@ -47,14 +47,26 @@
 			</div>
 		</div>
 
-		<div class="widget">
+		<div class="widget" ng-if="ctrl.showSuper">
 			<div class="widget-body">
-				<div class="widget-heading">Features in Progress
+				<div class="widget-heading">Super Features in Progress
 					<button class="pull-right btn-default btn-xm active" ng-show="ctrl.showFeatureLimitButton" ng-click="ctrl.setFeatureLimit()" ng-init="ctrl.featureLimit=4">+/-</button>
 				</div>
 				<div class="dash-row" ng-repeat="feature in ctrl.epicStoryPoints | limitTo:ctrl.featureLimit">
 					<div class="pull-right">{{feature.sEstimate}}</div>
 					<div class="dash-overflow">{{feature.sEpicName}}</div>
+				</div>
+			</div>
+		</div>
+		<div class="widget" ng-if="!ctrl.showSuper">
+			<div class="widget-body">
+				<div class="widget-heading">Features in Progress
+					<button class="pull-right btn-default btn-xm active" ng-show="ctrl.showFeatureLimitButton" ng-click="ctrl.setFeatureLimit()" ng-init="ctrl.featureLimit=4">+/-</button>
+				</div>
+				<div class="dash-row" ng-repeat="feature in ctrl.featureStoryPoints | limitTo:ctrl.featureLimit">
+					<div class="pull-right" ng-if="!ctrl.showHours">{{feature.sEstimate}}</div>
+					<div class="pull-right" ng-if="ctrl.showHours">{{(feature.sEstimateTime / 60)}}</div>
+					<div class="dash-overflow">{{feature.sName}}</div>
 				</div>
 			</div>
 		</div>

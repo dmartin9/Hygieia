@@ -12,6 +12,9 @@
     var today = new Date(_.now());
     var filterTeamId = $scope.widgetConfig.options.teamId;
     var estimateMetricType = $scope.widgetConfig.options.estimateMetricType;
+	var featureWipType = $scope.widgetConfig.options.featureWipType;
+	ctrl.showHours = estimateMetricType == 'hours' ? true : false;
+	ctrl.showSuper = featureWipType == 'super' ? true : false;
     ctrl.teamName = $scope.widgetConfig.options.teamName;
     // Scrum
     ctrl.iterations = [];
@@ -19,6 +22,7 @@
     ctrl.wipStoryPoints = null;
     ctrl.doneStoryPoints = null;
     ctrl.epicStoryPoints = null;
+	ctrl.featureStoryPoints = null;
     // Kanban
     ctrl.iterationsKanban = [];
     ctrl.totalStoryPointsKanban = null;
@@ -52,8 +56,10 @@
           .then(processWipResponse),
         featureData.done($scope.widgetConfig.componentId, filterTeamId, estimateMetricType)
           .then(processDoneResponse),
-        featureData.featureWip($scope.widgetConfig.componentId,
-          filterTeamId, estimateMetricType).then(processFeatureWipResponse),
+        featureData.superFeatureWip($scope.widgetConfig.componentId,
+          filterTeamId, estimateMetricType).then(processSuperFeatureWipResponse),
+		featureData.featureWip($scope.widgetConfig.componentId,
+		  filterTeamId).then(processFeatureWipResponse),
         featureData.sprint($scope.widgetConfig.componentId, filterTeamId)
           .then(processSprintResponse),
 
@@ -124,7 +130,7 @@
      *
      * @param data
      */
-    function processFeatureWipResponse(data) {
+    function processSuperFeatureWipResponse(data) {
       var epicCollection = [];
 
       for (var i = 0; i < data.result.length; i++) {
@@ -139,6 +145,21 @@
 
       ctrl.epicStoryPoints = epicCollection.sort(compare).reverse();
     }
+	
+	function processFeatureWipResponse (data) {
+		var storyCollection = [];
+		
+		for (var i = 0;i< data.result.length; i++) {
+			storyCollection.push(data.result[i]);
+		}
+		if (data.result.length <= 4) {
+			ctrl.showFeatureLimitButton = false;
+		} else {
+			ctrl.showFeatureLimitButton = true;
+		}
+		
+		ctrl.featureStoryPoints = storyCollection.sort(compare).reverse();
+	}
 
     /**
      * Processor for super feature estimates in-progress. Also sets the
@@ -432,7 +453,7 @@
         case true:
           // Swap Kanban
           if (ctrl.showStatus.kanban === false) {
-            ctrl.showStatus.kanban = true;
+            ctrl.showStatus.kanban = false;
           } else if (ctrl.showStatus.kanban === true) {
             ctrl.showStatus.kanban = false;
           }
@@ -441,14 +462,14 @@
           if (ctrl.showStatus.scrum === false) {
             ctrl.showStatus.scrum = true;
           } else if (ctrl.showStatus.scrum === true) {
-            ctrl.showStatus.scrum = false;
+            ctrl.showStatus.scrum = true;
           }
           break;
         case false:
           // Use case for clean up and one time loads
           if (ctrl.iterationsKanban.length >= 1) {
-            ctrl.showStatus.kanban = true;
-            ctrl.showStatus.scrum = false;
+            ctrl.showStatus.kanban = false;
+            ctrl.showStatus.scrum = true;
           } else if (ctrl.iterations.length >= 1) {
             ctrl.showStatus.scrum = true;
             ctrl.showStatus.kanban = false;

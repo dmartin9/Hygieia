@@ -18,6 +18,7 @@
 		ctrl.typeDropdownPlaceholder = 'Loading Feature Data Sources ...';
 		ctrl.typeDropdownDisabled = true;
 		ctrl.estimateMetricDropdownDisabled = false;
+		ctrl.featureWipDisabled = false;
 		ctrl.submitted = false;
 		ctrl.hideScopeOwnerDropDown = true;
 		ctrl.evaluateTypeSelection = evaluateTypeSelection;
@@ -35,7 +36,8 @@
 		ctrl.featureTypeOptions = [];
 		ctrl.estimateMetricType = "";
 		ctrl.estimateMetrics = [{type: "hours", value: "Hours"}, {type: "storypoints", value: "Story Points" }];
-
+		ctrl.featureWipType = "";
+		ctrl.featureWipTypes = [{type: "super", value: "Super Feature"}, {type: "feature", value: "Feature"}];
 
 		// Request collectors
 		collectorData.collectorsByType('scopeowner').then(
@@ -46,6 +48,7 @@
 				processCollectorItemsResponse);
 		
 		initEstimateMetricType(widgetConfig);
+		initFeatureWipType(widgetConfig);
 
 		function processCollectorItemsResponse(data, currentCollectorItemId) {
 			var scopeOwners = [];
@@ -153,6 +156,14 @@
 				ctrl.estimateMetricType = 'storypoints';
 			}
 		}
+		
+		function initFeatureWipType(widgetConfig) {
+			if (widgetConfig.options.featureWipType != undefined && widgetConfig.options.featureWipType != null) {
+				ctrl.featureWipType = widgetConfig.options.featureWipType;
+			} else {
+				ctrl.featureWipType = 'feature';
+			}
+		}
 
 		function evaluateTypeSelection() {
 			var tempTypeOptions = [];
@@ -173,21 +184,23 @@
 			} else {
 				if (ctrl.collectorId.value === 'Jira') {
 					ctrl.hideEstimateMetricDropDown = false;
+					ctrl.hideFeatureWipDropDown = false;
 				} else {
 					ctrl.hideEstimateMetricDropDown = true;
+					ctrl.hideFeatureWipDropDown = true;
 				}
 				ctrl.hideScopeOwnerDropDown = false;
 			}
 		}
 
-		function submitForm(valid, collectorItemId, estimateMetricType) {
+		function submitForm(valid, collectorItemId, estimateMetricType, featureWipType) {
 			ctrl.submitted = true;
 			if (valid && ctrl.collectors.length) {
-				processCollectorItemResponse(collectorItemId, estimateMetricType);
+				processCollectorItemResponse(collectorItemId, estimateMetricType, featureWipType);
 			}
 		}
 
-		function processCollectorItemResponse(collectorItemId, estimateMetricType) {
+		function processCollectorItemResponse(collectorItemId, estimateMetricType, featureWipType) {
 			var postObj = {
 				name : 'feature',
 				options : {
@@ -195,11 +208,12 @@
 					teamName : ctrl.collectorItemId.teamName,
 					teamId : ctrl.collectorItemId.teamId,
 					showStatus : {
-				      kanban: true,
-				      scrum: false
+				      kanban: false,
+				      scrum: true
 				    },
 					intervalOff : 2,
-					estimateMetricType : ctrl.estimateMetricType
+					estimateMetricType : ctrl.estimateMetricType,
+					featureWipType : ctrl.featureWipType
 				},
 				componentId : modalData.dashboard.application.components[0].id,
 				collectorItemId : ctrl.collectorItemId.value
