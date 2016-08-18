@@ -453,7 +453,7 @@
         case true:
           // Swap Kanban
           if (ctrl.showStatus.kanban === false) {
-            ctrl.showStatus.kanban = false;
+            ctrl.showStatus.kanban = true;
           } else if (ctrl.showStatus.kanban === true) {
             ctrl.showStatus.kanban = false;
           }
@@ -462,14 +462,14 @@
           if (ctrl.showStatus.scrum === false) {
             ctrl.showStatus.scrum = true;
           } else if (ctrl.showStatus.scrum === true) {
-            ctrl.showStatus.scrum = true;
+            ctrl.showStatus.scrum = false;
           }
           break;
         case false:
           // Use case for clean up and one time loads
           if (ctrl.iterationsKanban.length >= 1) {
-            ctrl.showStatus.kanban = false;
-            ctrl.showStatus.scrum = true;
+            ctrl.showStatus.kanban = true;
+            ctrl.showStatus.scrum = false;
           } else if (ctrl.iterations.length >= 1) {
             ctrl.showStatus.scrum = true;
             ctrl.showStatus.kanban = false;
