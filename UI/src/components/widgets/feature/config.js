@@ -208,8 +208,8 @@
 					teamName : ctrl.collectorItemId.teamName,
 					teamId : ctrl.collectorItemId.teamId,
 					showStatus : {
-				      kanban: false,
-				      scrum: true
+				      kanban: true,
+				      scrum: false
 				    },
 					intervalOff : 2,
 					estimateMetricType : ctrl.estimateMetricType,
